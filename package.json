@@ -1,0 +1,27 @@
+{
+  "name": "flow-navigation",
+  "version": "1.0.0",
+  "description": "Simple internal component navigtion",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "prebuild": "rimraf lib",
+    "build": "babel src --out-dir lib",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "prop-types": "^15.5.10",
+    "reselect": "^3.0.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-react-native": "^3.0.2",
+    "babel-preset-react-native-syntax": "^1.0.0",
+    "rimraf": "^2.6.1"
+  }
+}
