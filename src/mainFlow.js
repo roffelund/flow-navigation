@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import ContentAnimation from './components/contentAnimation';
+import ContentAnimation from './contentAnimation';
 
 function renderContentPage(
   { title, startPosition, ContentComponent, currentPosition, injected },
