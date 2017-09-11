@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Animated, View } from 'react-native';
 import PropTypes from 'prop-types';
 
-import { flowClearInjections } from './flowRedux'
+import { flowClearInjections } from './flowRedux.js'
 
 class ContentAnimation extends Component {
   constructor(props) {

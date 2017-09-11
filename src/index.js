@@ -1,2 +1,2 @@
-export { FlowNavigation as default } from './mainFlow'
-export * from './flowRedux'
+export { FlowNavigation as default } from './mainFlow.js'
+export * from './flowRedux.js'
