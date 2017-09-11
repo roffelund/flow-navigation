@@ -1,16 +1,21 @@
 {
   "name": "flow-navigation",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Simple internal component navigtion",
   "main": "lib/index.js",
   "files": [
-    "lib"
+    "lib",
+    "src"
   ],
   "scripts": {
     "prebuild": "rimraf lib",
     "build": "babel src --out-dir lib",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository" :
+  { "type" : "git"
+  , "url" : "https://github.com/roffelund/flow-navigation"
+},
   "author": "",
   "license": "MIT",
   "dependencies": {

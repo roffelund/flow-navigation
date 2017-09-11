@@ -4,6 +4,8 @@ React Navigation and similar packages work fine for navigation between 'scenes' 
 However I have often lacked an inner navgation. Load in a list of components and navigate between them
 smoothly in an inner flow.
 
+NOTE! This is a work in progress.
+
 ## Integration
 
 ## Routes
