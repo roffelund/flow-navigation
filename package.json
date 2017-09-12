@@ -8,6 +8,7 @@
     "src"
   ],
   "scripts": {
+    "watch":"npm run build -- --watch",
     "prebuild": "rimraf lib",
     "build": "babel src --out-dir lib",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
-
-import ContentAnimation from './contentAnimation.js';
+import PropTypes from 'prop-types'
+import ContentAnimation from './componentAnimation';
 
 function renderContentPage(
   { title, startPosition, ContentComponent, currentPosition, injected },
@@ -26,7 +26,7 @@ function renderAllContentComponents(routes, screenWidth) {
   );
 }
 
-const FlowNavigation = ({ routes }) =>
+const FlowNavigation = ({ routes, screenWidth }) =>
   <View style={{ flex: 1, flexDirection: 'row' }}>
     {
       renderAllContentComponents(routes, screenWidth)
@@ -34,7 +34,7 @@ const FlowNavigation = ({ routes }) =>
   </View>
 
 FlowNavigation.propTypes = {
-  routes: PropTypes.array.isRequired,
+  routes: PropTypes.any.isRequired,
   screenWidth: PropTypes.number.isRequired,
 }
 

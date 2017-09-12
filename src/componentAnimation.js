@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { Animated, View } from 'react-native';
 import PropTypes from 'prop-types';
 
-import { flowClearInjections } from './flowRedux.js'
+import { flowClearInjections } from './flowRedux'
 
 class ContentAnimation extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      animatedValue: new Animated.Value(props.startPosition * width),
+      animatedValue: new Animated.Value(props.startPosition * props.screenWidth),
     };
   }
 
@@ -26,10 +26,10 @@ class ContentAnimation extends Component {
 
   animation(toValue) {
     Animated.timing(this.state.animatedValue, {
-      toValue: toValue * this.props.width,
+      toValue: toValue * this.props.screenWidth,
       duration: 1000,
     }).start(() => {
-      if (this.props.injected) this.props.onAnimateComplete();
+      if (this.props.injected) flowClearInjections();
     });
   }
   render() {
@@ -50,9 +50,9 @@ class ContentAnimation extends Component {
   }
 }
 
-ContentAnimation.defaultProps({
+ContentAnimation.defaultProps = {
   injected: false,
-})
+}
 
 ContentAnimation.propTypes = {
   screenWidth: PropTypes.number.isRequired,
