@@ -228,7 +228,7 @@ export function flowClearInjections(flowName = DEFAULT_FLOW_NAME) {
   return {
     type: CLEAR_INJECTIONS,
     payload: {
-      fĺowName
+      flowName
     }
   };
 }
