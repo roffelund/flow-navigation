@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 
 export const DEFAULT_NAME_SPACE = 'flow';
+export const DEFAULT_FLOW_NAME = 'defaultFlow'
 const ACTION_ROOT = 'flow-navigation';
 const INITALIZE = `${ACTION_ROOT}/INITALIZE`;
 const NEXT = `${ACTION_ROOT}/NEXT`; // TODO DEFAULT_NAMESPACE should be package name instead.
@@ -64,40 +65,55 @@ function clearInjections(routes, currentPage) {
 }
 
 export function flowNavigationReducer(state = {}, action = {}) {
+  const currentState = state[action.payload.flowName]
+
   switch (action.type) {
     case INITALIZE:
       return {
-        currentPage: 0,
-        history: [],
-        routes: action.payload.routes,
+        ...state,
+        [action.payload.flowName]: {
+          currentPage: 0,
+          history: [],
+          routes: action.payload.routes,
+        }
       }
     case NEXT:
       return {
         ...state,
-        history: [...state.history, state.currentPage],
-        currentPage: state.currentPage + 1,
-        routes: newRoutes(
-          state.currentPage,
-          state.currentPage + 1,
-          state.routes,
-        ),
+        [action.payload.flowName]: {
+          ...currentState,
+          history: [...currentState.history, currentState.currentPage],
+          currentPage: currentState.currentPage + 1,
+          routes: newRoutes(
+            currentState.currentPage,
+            currentState.currentPage + 1,
+            currentState.routes,
+          )
+        },
       };
     case BACK:
       return {
-        history: state.history.slice(0, state.history.length - 1),
-        currentPage: state.currentPage - 1,
-        routes: newRoutes(
-          state.currentPage,
-          state.currentPage - 1,
-          state.routes,
-        ),
+        ...state,
+        [action.payload.flowName]: {
+          ...currentState,
+          history: currentState.history.slice(0, currentState.history.length - 1),
+          currentPage: currentState.currentPage - 1,
+          routes: newRoutes(
+            currentState.currentPage,
+            currentState.currentPage - 1,
+            currentState.routes,
+          ),
+        }
       };
     case INJECT:
       return {
         ...state,
-        currentPage: state.currentPage + 1,
-        history: [...state.history, state.currentPage],
-        routes: injectRoute(state.routes, action.payload.route, action.payload.index + 1),
+        [action.payload.flowName]: {
+          ...currentState,
+          currentPage: currentState.currentPage + 1,
+          history: [...currentState.history, currentState.currentPage],
+          routes: injectRoute(currentState.routes, action.payload.route, action.payload.index + 1),
+        }
       };
     case GOTO:
       return {
@@ -106,14 +122,20 @@ export function flowNavigationReducer(state = {}, action = {}) {
     case RESET:
       return {
         ...state,
-        history: [],
-        currentPage: 0,
-        routes: action.payload.routes,
+        [action.payload.flowName]: {
+          ...currentState,
+          history: [],
+          currentPage: 0,
+          routes: action.payload.routes,
+        }
       };
     case CLEAR_INJECTIONS:
       return {
         ...state,
-        ...clearInjections(state.routes, state.currentPage),
+        [action.payload.flowName]: {
+          ...currentState,
+          ...clearInjections(currentState.routes, currentState.currentPage)
+        }
       };
     default:
       return state;
@@ -123,68 +145,87 @@ export function flowNavigationReducer(state = {}, action = {}) {
 /* ---------- Selectors -------- */
 
 const createSelectNameSpace = (nameSpace = DEFAULT_NAME_SPACE) => state => state[nameSpace] || {};
-export const createSelectCurrentPage = (nameSpace = DEFAULT_NAME_SPACE) =>  createSelector(
+
+export const createSelectFlow = (flowName = DEFAULT_FLOW_NAME, nameSpace = DEFAULT_NAME_SPACE) => createSelector(
   createSelectNameSpace(nameSpace),
+  state => state.flowName || {}
+)
+export const createSelectCurrentPage = (flowName = DEFAULT_FLOW_NAME, nameSpace = DEFAULT_NAME_SPACE) =>  createSelector(
+  createSelectFlow(flowName, nameSpace),
   state => state.currentPage || 0,
 );
-export const createSelectHistory = (nameSpace = DEFAULT_NAME_SPACE) => createSelector(
-  createSelectNameSpace(nameSpace),
+export const createSelectHistory = (flowName = DEFAULT_FLOW_NAME, nameSpace = DEFAULT_NAME_SPACE) => createSelector(
+  createSelectFlow(flowName, nameSpace),
   state => state.history || {},
 );
-export const createSelectRoutes = (nameSpace = DEFAULT_NAME_SPACE) => createSelector(
-  createSelectNameSpace(nameSpace),
+export const createSelectRoutes = (flowName = DEFAULT_FLOW_NAME, nameSpace = DEFAULT_NAME_SPACE) => createSelector(
+  createSelectFlow(flowName, nameSpace),
   state => state.routes || [],
 );
-export const createSelectCurrentRoute = (nameSpace = DEFAULT_NAME_SPACE) => createSelector(
-  createSelectNameSpace(nameSpace),
-  state => state.routes[state.currentPage],
+export const createSelectCurrentRoute = (flowName = DEFAULT_FLOW_NAME, nameSpace = DEFAULT_NAME_SPACE) => createSelector(
+  createSelectFlow(flowName, nameSpace),
+  state => state.routes[state.currentPage] || {},
 );
 
 /* --------- Action Creators ------- */
-export function flowInitalize(routes) {
+export function flowInitalize(routes, flowName = DEFAULT_FLOW_NAME) {
   return {
     type: INITALIZE,
     payload: {
-      routes
+      routes,
+      flowName
     }
   }
 }
 
-export function flowNext() {
+export function flowNext(flowName = DEFAULT_FLOW_NAME) {
   return {
     type: NEXT,
-  };
-}
-export function flowBack() {
-  return {
-    type: BACK,
-  };
-}
-export function flowReset(routes) {
-  return {
-    type: RESET,
     payload: {
-      routes
+      flowName
     }
   };
 }
-export function flowInject(route, index) {
+export function flowBack(flowName = DEFAULT_FLOW_NAME) {
+  return {
+    type: BACK,
+    payload: {
+      flowName
+    }
+  };
+}
+export function flowReset(routes, flowName = DEFAULT_FLOW_NAME) {
+  return {
+    type: RESET,
+    payload: {
+      routes,
+      flowName
+    }
+  };
+}
+export function flowInject(route, index, flowName = DEFAULT_FLOW_NAME) {
   return {
     type: INJECT,
     payload: {
       route,
       index,
+      flowName
     },
   };
 }
 export function flowGoTo(routeName) {
   return {
     type: GOTO,
-    payload: routeName,
+    payload: {
+      routeName
+    }
   };
 }
-export function flowClearInjections() {
+export function flowClearInjections(flowName = DEFAULT_FLOW_NAME) {
   return {
     type: CLEAR_INJECTIONS,
+    payload: {
+      fĺowName
+    }
   };
 }
