@@ -33,13 +33,13 @@ class ContentAnimation extends Component {
     });
   }
   render() {
-    const { children } = this.props;
+    const { children, screenWidth } = this.props;
     const { animatedValue } = this.state;
 
     return (
       <Animated.View
         style={{
-          flex: 1,
+          width: screenWidth,
           flexDirection: 'row',
           position: 'absolute',
           left: animatedValue,
