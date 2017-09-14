@@ -65,7 +65,7 @@ function clearInjections(routes, currentPage) {
 }
 
 export function flowNavigationReducer(state = {}, action = {}) {
-  const currentState = state[action.payload.flowName || DEFAULT_FLOW_NAME]
+  const currentState = state[(action.payload && action.payload.flowName) || DEFAULT_FLOW_NAME]
 
   switch (action.type) {
     case INITALIZE:
@@ -146,25 +146,28 @@ export function flowNavigationReducer(state = {}, action = {}) {
 
 const createSelectNameSpace = (nameSpace = DEFAULT_NAME_SPACE) => state => state[nameSpace] || {};
 
-export const createSelectFlow = (flowName = DEFAULT_FLOW_NAME, nameSpace = DEFAULT_NAME_SPACE) => createSelector(
+export const createSelectFlow = (flowName = DEFAULT_FLOW_NAME, nameSpace) => createSelector(
   createSelectNameSpace(nameSpace),
-  state => state.flowName || {}
+  state => state[flowName] || {}
 )
-export const createSelectCurrentPage = (flowName = DEFAULT_FLOW_NAME, nameSpace = DEFAULT_NAME_SPACE) =>  createSelector(
+export const createSelectCurrentPage = (flowName, nameSpace) =>  createSelector(
   createSelectFlow(flowName, nameSpace),
   state => state.currentPage || 0,
 );
-export const createSelectHistory = (flowName = DEFAULT_FLOW_NAME, nameSpace = DEFAULT_NAME_SPACE) => createSelector(
+export const createSelectHistory = (flowName, nameSpace) => createSelector(
   createSelectFlow(flowName, nameSpace),
   state => state.history || {},
 );
-export const createSelectRoutes = (flowName = DEFAULT_FLOW_NAME, nameSpace = DEFAULT_NAME_SPACE) => createSelector(
+export const createSelectRoutes = (flowName, nameSpace) => createSelector(
   createSelectFlow(flowName, nameSpace),
   state => state.routes || [],
 );
-export const createSelectCurrentRoute = (flowName = DEFAULT_FLOW_NAME, nameSpace = DEFAULT_NAME_SPACE) => createSelector(
-  createSelectFlow(flowName, nameSpace),
-  state => state.routes[state.currentPage] || {},
+export const createSelectCurrentRoute = (flowName, nameSpace) => createSelector(
+  [
+    createSelectCurrentPage(flowName, nameSpace),
+    createSelectRoutes(flowName, nameSpace),
+  ],
+  (currentPage, routes) => routes[currentPage] || {},
 );
 
 /* --------- Action Creators ------- */
