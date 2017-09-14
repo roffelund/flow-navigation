@@ -65,7 +65,7 @@ function clearInjections(routes, currentPage) {
 }
 
 export function flowNavigationReducer(state = {}, action = {}) {
-  const currentState = state[action.payload.flowName]
+  const currentState = state[action.payload.flowName || DEFAULT_FLOW_NAME]
 
   switch (action.type) {
     case INITALIZE:
