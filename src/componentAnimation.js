@@ -39,6 +39,7 @@ class ContentAnimation extends Component {
     return (
       <Animated.View
         style={{
+          flex: 1,
           width: screenWidth,
           position: 'absolute',
           left: animatedValue,
