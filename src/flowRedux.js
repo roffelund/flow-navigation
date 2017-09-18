@@ -10,6 +10,7 @@ const INJECT = `${ACTION_ROOT}/INJECT`;
 const GOTO = `${ACTION_ROOT}/GOTO`;
 const RESET = `${ACTION_ROOT}/RESET`;
 const CLEAR_INJECTIONS = `${ACTION_ROOT}/CLEAR_INJECTIONS`;
+const CLEAR_FORWARD_INJECTIONS = `${ACTION_ROOT}/CLEAR_FORWARD_INJECTIONS`;
 
 /* ------------- Reducers ------------- */
 
@@ -44,6 +45,7 @@ function newRoutes(previousPage, nextPage, routes) {
   return newArray;
 }
 
+// Used to remove all injections except if currentPage
 function clearInjections(routes, currentPage) {
   const pageNumber = routes.map((item, index) => {
     if (item.injected && item.currentPosition !== 0) {
@@ -64,7 +66,29 @@ function clearInjections(routes, currentPage) {
   };
 }
 
+// Used to remove all injections where index is higher than currentPage
+function clearForwardInjections(routes, currentPage) {
+  const pageNumber = routes.map((item, index) => {
+    if (item.injected && item.currentPosition !== 0) {
+      if (index <= currentPage) {
+        return currentPage - 1;
+      }
+      return currentPage;
+    }
+    return null;
+  });
+  const array = routes.filter(
+    (item, index) =>
+      index <= currentPage || item.currentPosition === 0 || item.currentPosition === -1 || !item.injected,
+  );
+  return {
+    currentPage: pageNumber.filter(item => item !== null)[0] || currentPage,
+    routes: array,
+  };
+}
+
 export function flowNavigationReducer(state = {}, action = {}) {
+
   const currentState = state[(action.payload && action.payload.flowName) || DEFAULT_FLOW_NAME]
 
   switch (action.type) {
@@ -135,6 +159,14 @@ export function flowNavigationReducer(state = {}, action = {}) {
         [action.payload.flowName]: {
           ...currentState,
           ...clearInjections(currentState.routes, currentState.currentPage)
+        }
+      };
+    case CLEAR_FORWARD_INJECTIONS:
+      return {
+        ...state,
+        [action.payload.flowName]: {
+          ...currentState,
+          ...clearForwardInjections(currentState.routes, currentState.currentPage)
         }
       };
     default:
@@ -227,6 +259,14 @@ export function flowGoTo(routeName) {
 export function flowClearInjections(flowName = DEFAULT_FLOW_NAME) {
   return {
     type: CLEAR_INJECTIONS,
+    payload: {
+      flowName
+    }
+  };
+}
+export function flowClearForwardInjections(flowName = DEFAULT_FLOW_NAME) {
+  return {
+    type: CLEAR_FORWARD_INJECTIONS,
     payload: {
       flowName
     }

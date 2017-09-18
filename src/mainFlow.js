@@ -1,22 +1,25 @@
 import React from 'react';
 import { View } from 'react-native';
 import PropTypes from 'prop-types'
-import ContentAnimation from './componentAnimation';
+import ComponentAnimation from './componentAnimation';
+
+// TODO add support for onBackAtBeginning prop and onNextEnd prop-types
+// recieve funcition of behavior when user presses back at beginning, or next
+// at the end of routes.
 
 function renderContentPage(
-  { title, startPosition, ContentComponent, currentPosition, injected },
+  { title, startPosition, ContentComponent, currentPosition, routeKey },
   pageIndex,
   screenWidth,
 ) {
   return (
-    <ContentAnimation
-      key={title}
+    <ComponentAnimation
+      key={routeKey}
       startPosition={startPosition}
-      injected={injected}
       screenWidth={screenWidth}
       nextPosition={currentPosition}>
       <ContentComponent pageIndex={pageIndex} />
-    </ContentAnimation>
+    </ComponentAnimation>
   );
 }
 

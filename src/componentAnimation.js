@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Animated, View } from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { flowClearInjections } from './flowRedux'
@@ -13,7 +13,7 @@ class ContentAnimation extends Component {
   }
 
   componentDidMount() {
-    if (this.props.injected) {
+    if (this.props.currentPosition !== this.props.nextPosition) {
       this.animation(this.props.nextPosition);
     }
   }
@@ -28,35 +28,37 @@ class ContentAnimation extends Component {
     Animated.timing(this.state.animatedValue, {
       toValue: toValue * this.props.screenWidth,
       duration: 1000,
-    }).start(() => {
-      if (this.props.injected) flowClearInjections();
-    });
+    }).start();
   }
   render() {
     const { children, screenWidth } = this.props;
     const { animatedValue } = this.state;
 
+    const styles = StyleSheet.create({
+      animatedView: {
+        flex: 1,
+        width: screenWidth,
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+      },
+      innerWrapper: {
+        flex: 1
+      }
+    })
+
     return (
-      <Animated.View
-        style={{
-          flex: 1,
-          width: screenWidth,
-          position: 'absolute',
-          left: animatedValue,
-        }}>
-        <View style={{ flex: 1 }}>{children}</View>
+      <Animated.View style={[styles.animatedView, { left: animatedValue }]}>
+        <View style={styles.innerWrapper}>
+          {children}
+        </View>
       </Animated.View>
     );
   }
 }
 
-ContentAnimation.defaultProps = {
-  injected: false,
-}
-
 ContentAnimation.propTypes = {
   screenWidth: PropTypes.number.isRequired,
-  injected: PropTypes.bool,
   children: PropTypes.element.isRequired,
   startPosition: PropTypes.oneOf([-1, 0, 1]).isRequired,
   nextPosition: PropTypes.oneOf([-1, 0, 1]).isRequired,
