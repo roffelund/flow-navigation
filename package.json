@@ -1,6 +1,6 @@
 {
   "name": "flow-navigation",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Simple internal component navigtion",
   "main": "lib/index.js",
   "files": [
