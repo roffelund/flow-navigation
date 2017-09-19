@@ -22,8 +22,21 @@ const injectRoute = (routes, route, index) => {
     currentPosition: -1,
   }));
   const backArray = routes.slice(index, routes.length);
+  // If route not an Array
+  if (!Array.isArray(route)) {
+    return [
+      ...newFrontArray.concat([{ ...route, injected: true }]).concat(backArray),
+    ];
+  }
+
+  const newRouteArray = route.map(r => ({
+    ...r,
+    injected: true
+  }))
+
+  // If route is an array of objects
   return [
-    ...newFrontArray.concat([{ ...route, injected: true }]).concat(backArray),
+    ...newFrontArray.concat(newRouteArray).concat(backArray),
   ];
 };
 
