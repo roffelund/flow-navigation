@@ -80,7 +80,7 @@ function clearInjections(routes, currentPage) {
 }
 
 // Used to remove all injections where index is higher than currentPage
-function clearForwardInjections(routes, currentPage) {
+export function clearForwardInjections(routes, currentPage) {
   const pageNumber = routes.map((item, index) => {
     if (item.injected && item.currentPosition !== 0) {
       if (index <= currentPage) {
